@@ -1,76 +1,73 @@
-import { LOGO_URL } from "../utils/constants";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import useOnlineStatus from "../utils/useOnlineStatus";
+import { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import useOnlineStatus from '../utils/useOnlineStatus';
+import UserContext from '../utils/UserContext';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
-  const [btnNameReact, setBtnNameReact] = useState("Login");
-  // console.log('header render');
+  const [btnNameReact, setBtnNameReact] = useState('Login');
 
-  // * if no dependency array => useEffect is called on every component render of the component
-  // * if the dependency array is empty => useEffect is called only on the initial render(just once) of the component
-  // * if the dependency array contains a dependency => useEffect is called everytime the value of the depencecy changes
-  // * Dependency: A depency can be a state variable (or) a function
+  const onlineStatus = useOnlineStatus();
 
-  // useEffect(() => {
-  //   console.log(`useEffect Called`);
-  // }, [btnNameReact]);
-  const online = useOnlineStatus();
+  const { loggedInUser } = useContext(UserContext);
+
+  // * Subscribing to the store using a Selector
+  const cartItems = useSelector((store) => store.cart.items);
+  console.log(cartItems);
 
   return (
-    <div className="header">
+    <header className="flex justify-between bg-pink-200 sm:bg-yellow-200 lg:bg-green-200 font-[500] shadow-md">
       <div className="logo-container">
-        {/* <img src={LOGO_URL} alt="App Logo" className="logo" /> */}
         <Link to="/">
           <img
             src="https://cdn-icons-png.flaticon.com/128/3655/3655682.png"
             alt="Logo"
-            className="logo"
+            className="w-16 mx-6 mt-2"
           />
         </Link>
       </div>
-      <div className="nav-items">
-        <ul>
-          
-          <li>Online Status:{online ? "✅" : "🔴"} </li>
-          <li>
-            <Link to="/" className="links">
-              Home
-            </Link>
+      <div className="flex items-center ">
+        <ul className="flex p-4 m-4">
+          <li className="px-4">Online Status: {onlineStatus ? '✅' : '⛔'}</li>
+          <li className="px-4 hover:text-green-500 duration-[.3s]">
+            <Link to="/">Home</Link>
           </li>
-          <li>
-            <Link to="/about" className="links">
-              About Us
-            </Link>
+          <li className="px-4 hover:text-green-500 duration-[.3s]">
+            <Link to="/about">About Us</Link>
           </li>
-          <li>
-            <Link to="/contact" className="links">
-              Contact Us
-            </Link>
+          <li className="px-4 hover:text-green-500 duration-[.3s]">
+            <Link to="/contact">Contact Us</Link>
           </li>
-          {/* <li>
-            <Link className="links">Cart</Link>
-          </li> */}
-          <li>
-            <Link to="/groceries" className="links">
-              Groceries
+          <li className="px-4 hover:text-green-500 duration-[.3s]">
+            <Link to="/grocery">Grocery</Link>
+          </li>
+          <li className="px-4 hover:text-green-500 duration-[.3s]">
+            <Link to="/cart">
+              🛒 (
+              {cartItems.length === 1
+                ? `${cartItems.length} item`
+                : `${cartItems.length} items`}
+              )
             </Link>
           </li>
           <button
-            className="loginBtn"
+            className="px-4 hover:text-green-500 duration-[.3s]"
             onClick={() => {
               //   btnName = 'Logout';
-              btnNameReact === "Login"
-                ? setBtnNameReact("Logout")
-                : setBtnNameReact("Login");
+              btnNameReact === 'Login'
+                ? setBtnNameReact('Logout')
+                : setBtnNameReact('Login');
               console.log(btnNameReact);
             }}
           >
             {btnNameReact}
           </button>
+          <li className="px-4 font-bold">
+            <Link className="links">{loggedInUser}</Link>
+          </li>
         </ul>
       </div>
-    </div>
+    </header>
   );
 };
 

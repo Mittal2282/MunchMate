@@ -1,38 +1,101 @@
-import React from "react";
+import React from 'react';
 
 class UserClass extends React.Component {
   constructor(props) {
     super(props);
+
+    // console.log(props);
     this.state = {
-      count1: 0,
+      // count: 0,
+      // count2: 2,
+      userInfo: {
+        name: 'Dummy',
+        location: 'Default',
+      },
     };
-    console.log("child constructor");
+    // console.log(this.props.name + 'Child Constructor');
   }
-  componentDidMount(){
-    console.log("child did mount");
-  };
+
+  async componentDidMount() {
+    // console.log(this.props.name + 'Child Component Did Mount');
+    // * API call
+    const data = await fetch(
+      'https://api.github.com/users/mittal2282'
+    );
+    const json = await data.json();
+
+    this.setState({
+      userInfo: json,
+    });
+
+    // console.log(json);
+  }
+
+  componentDidUpdate() {
+    // console.log('Component Did Update');
+  }
+
+  componentWillUnmount() {
+    // console.log('Component Will Unmount');
+  }
+
   render() {
-    console.log("child render");
-    const { name, location } = this.props;
-    const { count1 } = this.state;
+    // const { name, location } = this.props;
+    // const { count } = this.state;
+
+    // console.log(this.props.name + 'Child Render');
+
+    const { name, location, avatar_url } = this.state.userInfo;
+
     return (
       <div className="user-card">
-        <h2>Count1:{count1}</h2>
-        <button
+        <img src={avatar_url} alt={name} />
+        {/* // * accessing the state variable */}
+        {/* <h1>Count: {this.state.count}</h1> */}
+        {/* <h1>Count: {count}</h1> */}
+        {/* <button
           onClick={() => {
+            // * NEVER UPDATE STATE VARIABLES DIRECTLY
+            // this.state.count = this.state.count + 1;
+
+            // * USE setState() method instead
+
             this.setState({
-              count1: this.state.count1 + 1,
+              count: this.state.count + 1,
             });
           }}
         >
-          Increase Count
-        </button>
-        <h2>Name:{name}</h2>
-        <h2>Location: {location} (from Class)</h2>
-        <h2>Contact: 9905126321</h2>
+          Count Increase
+        </button> */}
+        {/* <h2>Name: {this.props.name}</h2> */}
+        <h2>Name: {name}</h2>
+        {/* <h3>Location: {this.props.location}</h3> */}
+        <h3>Location: Faridabad</h3>
+        <h4>Contact: mittalrahul654@gmail.com</h4>
       </div>
     );
   }
 }
 
 export default UserClass;
+
+/* ****************************************************************
+ *
+ *
+ * ----- Mounting CYCLE -----
+ *   Constructor (dummy)
+ *   Render (dummy)
+ *       <HTML Dummy></HTML>
+ *   Component Did Mount
+ *       <API Call>
+ *       <this.setState> - State variable is updated
+ *
+ * ----- UPDATE CYCLE -----
+ *       render(API data)
+ *       <HTML (new API data)>
+ *   Component Did Update
+ *   Component Will Unmount
+ *
+ *
+ * Life Cycle Diagram Website Reference: https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
+ */
